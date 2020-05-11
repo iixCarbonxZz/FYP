@@ -1,0 +1,53 @@
+COMPLETED-
+
+login system
+catalog populating
+generic home page
+Catalog adding and updating items
+add image uploading to catalog upload process.
+add ability to delete items from catalog!
+add Admin area for level 3 accounts that allows account level promotion and such
+
+Basket-
+  add to basket -
+  view basket -
+  Quantity Modifiers <-- Attempt to add quantity display back to order view!!!
+  remove items from basket -
+  save basket on Logout -
+  load basket on login if exists -
+  add an "added to basket" message to the item page that fades out after some time.
+
+  Order-
+    checkout with basket -Pseudo
+    move basket items to orders -
+    view order -
+    get information on orders (knitters and users) users- knitters -
+    Knitters have to be able to see if any of their items exist on peoples orders. -
+    knitters change items status -
+
+TODO-
+  add check when changing item status to auto change order
+  status when last item gets completed. <--
+  add check when trying to delete admin account to stop them deleting the last one !IMPORTANT
+
+Reformat information on item view pages
+
+!NOT AS IMPORTANT
+
+Add pagination to the catalog /  portfolio.
+more features for admin level.
+email verification if I can get the site hosted so it has a web server. //NOT HAPPENING
+way to add profile image in account page. <--
+Change account edit to allow for blank entries to be ignored. <--
+make it actually delete item images when the item is deleted
+make it actually delete user images when the user is deleted
+
+
+
+//NOTE !IGNORE - FINISHED
+
+BASKET SYSTEM
+
+Have basket items saved as an array within the session. as part of the logout process,
+store the basket contents in a basket table in the database that is linked using userID
+to the user. this will allow the basket to persist between visits.
