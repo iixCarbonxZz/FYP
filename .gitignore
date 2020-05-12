@@ -1,0 +1,10 @@
+# Image Files #
+###############
+*.jpg
+*.png
+*.gif
+*.svg
+
+# Completion List #
+###################
+listofstuff.txt
