@@ -27,20 +27,21 @@ Basket-
 
 TODO-
   add check when changing item status to auto change order
-  status when last item gets completed. <--
+  status when last item gets completed.                     !!!DONE
+
   add check when trying to delete admin account to stop them deleting the last one !IMPORTANT
 
 Reformat information on item view pages
 
 !NOT AS IMPORTANT
 
-Add pagination to the catalog /  portfolio.
-more features for admin level.
-email verification if I can get the site hosted so it has a web server. //NOT HAPPENING
-way to add profile image in account page. <--
-Change account edit to allow for blank entries to be ignored. <--
-make it actually delete item images when the item is deleted
-make it actually delete user images when the user is deleted
+more features for admin level.                                !DONE
+way to add profile image in account page.                     !DONE
+Change account edit to allow for blank entries to be ignored. !DONE
+make it actually delete item images when the item is deleted. !DONE
+make it actually delete user images when the user is deleted. !DONE
+Add pagination to the catalog /  portfolio.                   !NOTDONE
+email verification if I can get the site hosted.              !NOTDONE
 
 
 
