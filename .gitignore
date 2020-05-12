@@ -1,9 +1,9 @@
-# Image Files #
-###############
-*.jpg
-*.png
-*.gif
-*.svg
+# Image Dirs #
+##############
+/img/catalog/item/*
+/img/catalog/item/*
+/img/profile/user/*
+/img/profile/default/*
 
 # Completion List #
 ###################
