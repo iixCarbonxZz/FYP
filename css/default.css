@@ -123,7 +123,7 @@ a:visited{
 .navigation-logo{
 	display:inline-block;
 	height: 60px;
-	width:240px;
+	width: 148px;
 	background-image:url("../img/banner/banner-logo.png");
 	background-size: contain;
 	background-repeat: no-repeat;
