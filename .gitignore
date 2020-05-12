@@ -1,9 +1,3 @@
-# Image Dirs #
-##############
-/img/catalog/item/*
-/img/profile/user/*
-/img/profile/default/*
-
 # Completion List #
 ###################
 listofstuff
