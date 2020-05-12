@@ -12,8 +12,22 @@
 	if(isset($_POST['statusEdit']) && $_POST['statusEdit'] == 'true'){
 		$updateLvl = 'UPDATE orderitems SET statusID = \'' . $_POST['statusSelect'] . '\'WHERE orderItemID = \'' . $_GET['orderItemID'] . '\'';
 		$updateQuery = mysqli_query($connect, $updateLvl);
-		$updatedStatus = true;
-		$_POST['statusEdit'] = 'false';
+		$queryOrderID = 'SELECT orderID FROM orderitems WHERE orderItemID = \'' . $_GET['orderItemID'] . '\'';
+		$getOrderID = mysqli_fetch_array(mysqli_query($connect, $queryOrderID));
+		if($updateQuery = TRUE){
+			$updatedStatus = true;
+			$_POST['statusEdit'] = 'false';
+			$rowsQuery = 'SELECT * FROM orderitems WHERE orderID =  \'' . $getOrderID['orderID'] . '\' AND statusID = 1';
+			$runRowsQuery = mysqli_query($connect, $rowsQuery);
+			$getOrderItemStatuses = mysqli_affected_rows($connect);
+			if($getOrderItemStatuses == 0){
+				$updateQuery = 'UPDATE ordertable SET statusID = 3 WHERE orderID = \'' . $getOrderID['orderID'] . '\'';
+				$updateOrderStatus = mysqli_query($connect, $updateQuery);
+				if($updateOrderStatus){
+
+				}
+			}
+		}
 	}
 
 ?>
@@ -66,6 +80,9 @@
 								</div>
 								<div class="infoListContainer">
 									<p class="labelInfo left">Order Item Unique ID: ' . $resultItems['orderItemID'] . '</p>
+								</div>
+								<div class="infoListContainer">
+									<p class="labelInfo left">Order ID: ' . $resultItems['orderID'] . '</p>
 								</div>
 							</div>
 							<div class="halfContainer right">

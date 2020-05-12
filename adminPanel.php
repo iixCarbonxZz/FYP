@@ -77,7 +77,7 @@
 	<?php
 				echo'
 						<input class="formButton color-light-bg" type="submit" value="List all Users" onclick="javascript: form.action=\'?action=listUsers\'"></input>
-						<input class="formButton color-light-bg" type="submit" value="- Null -" onclick=""></input>
+						<input class="formButton color-light-bg" type="submit" value="List all Knitters" onclick="javascript: form.action=\'?action=listUsers&knitter=true\'"></input>
 						<div class="formDivider"></div>
 						';
 			if(!isset($_GET['action'])){
@@ -88,8 +88,12 @@
 			}
 			if(isset($_GET['action'])){
 				if($_GET['action'] == 'listUsers'){
-
-					$getUsers = 'SELECT user_id, username, create_time, acc_level FROM user';
+					if(isset($_GET['knitter'])){
+							$getUsers = 'SELECT user_id, username, create_time, acc_level FROM user WHERE acc_level = 2';
+					}
+					else{
+						$getUsers = 'SELECT user_id, username, create_time, acc_level FROM user';
+					}
 					$queryUsers = mysqli_query($connect, $getUsers);
 					echo'
 						<div class="labelContainer color-light-bg">

@@ -33,12 +33,12 @@
 				}
 				elseif($queryInsert == true){
 					$success = 'true';
+					$itemID = mysqli_insert_id($connect);
 				}
 
 				$URLitemID = "";
 				$getRows = 'SELECT * FROM catalog';
 				$queryRows = mysqli_query($connect, $getRows);
-				$itemID = mysqli_num_rows($queryRows);
 			}
 			$deleted = 'false';
 				//Image Upload Handling.
@@ -144,6 +144,10 @@
 							echo mysqli_error($connect);
 				    }
 				    else{
+							$filePath = 'img\catalog\item\item' . $_GET['itemID'] . '.png';
+							if(file_exists($filePath)){
+								unlink($filePath);
+							}
 				      $delete = 'true';
 				    }
 					}

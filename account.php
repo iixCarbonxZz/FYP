@@ -10,6 +10,10 @@
 		$deleteQuery = 'DELETE FROM user WHERE user_id = ' . $_SESSION['userID'];
 		$deleteAccount = mysqli_query($connect, $deleteQuery);
 		if($deleteAccount){
+			$filePath = 'img\profile\user\\' . $_SESSION['userID'] . '.png';
+			if(file_exists($filePath)){
+				unlink($filePath);
+			}
 			unset($_SESSION['logged']);
 			$deleteText = "?deleted=true";
 		}
@@ -26,6 +30,99 @@
 	include 'src\logout.php';
 	include 'src\popups.php';
 
+	if(!empty($_POST)){
+		if(!empty($_POST['submit'])){
+				$updateQuery = "UPDATE user SET ";
+
+
+				//Sanitation and query building
+				if(!empty($_POST['username'])){
+					$sanitisedInput = htmlspecialchars($_POST['username']);
+					//if username includes illegal characters.
+					$validCheck = (preg_match('/\W+/', $_POST["username"]));
+					//check database to see if account with registered username already exists
+					$checkUser = ("SELECT * FROM user WHERE username = '$sanitisedInput'");
+					$queryUser = mysqli_query($connect, $checkUser);
+					$rowUser = mysqli_affected_rows($connect);
+
+					if($validCheck == 1){
+						$badUser = true;
+						$err = true;
+					}
+					elseif($rowUser >= 1){
+						$existUser = true;
+						$err = true;
+					}
+					elseif(strlen($sanitisedInput > 15)){
+						$longUser = true;
+						$err = true;
+					}
+					else{
+					$updateQuery .= " username = '$sanitisedInput' ,";
+					}
+				}
+				if(!empty($_POST['emailAdd'])){
+					$sanitisedInput = htmlspecialchars($_POST['emailAdd']);
+					$updateQuery .= " email = '$sanitisedInput' ,";
+				}
+				if(!empty($_POST['curPass']) && strlen($_POST['curPass']) !== 0){
+
+					$sanitisedInput = htmlspecialchars($_POST['curPass']);
+					$getPass = mysqli_fetch_array(mysqli_query($connect, "SELECT password FROM user WHERE user_id =" . $_SESSION['userID']));
+					//If password to account is not correct.
+					if(!password_verify($sanitisedInput, $getPass['password'])){
+						$badPass = true;
+						$err = true;
+					}
+					else{
+						$sanitisedInput = htmlSpecialChars($_POST['newPass']);
+						$validCheck = (preg_match('/\W+/', $_POST["newPass"]));
+						//If new password has illegal characters.
+						if($validCheck == 1){
+							$badNewPass = true;
+							$err = true;
+						}
+						else{
+							//If the confirmation is incorrect.
+							if($sanitisedInput !== $_POST['conPass']){
+								$badConPass = true;
+								$err = true;
+							}
+							elseif(!empty($_POST['newPass'])){
+
+								$sanitisedInput = htmlspecialchars($_POST['newPass']);
+								$newPass = password_hash($_POST['newPass'], PASSWORD_DEFAULT);
+								$updateQuery .= "password = '$newPass' ,";
+							}
+						}
+					}
+				}
+				if($_FILES['profileImage']['size'] !== 0){
+						$imageDir = "img/profile/user/";
+						$temp = explode(".", $_FILES["profileImage"]["name"]);
+						$newFileName = $_SESSION['userID'] . '.' . end($temp);
+						$newFileLocation = $imageDir . $newFileName;
+						if(move_uploaded_file($_FILES['profileImage']['tmp_name'], $newFileLocation)){
+							$image = true;
+						}
+						else{
+							$image = false;
+							$err = true;
+						}
+				}
+				if(!isset($err)){
+					$updateQuery = trim($updateQuery, ',');
+					$updateQuery .= "WHERE user_id = " . $_SESSION['userID'];
+					$updateUser = mysqli_query($connect, $updateQuery);
+					if($updateUser == TRUE){
+						$rowQueryUser = mysqli_fetch_array(mysqli_query($connect, "SELECT * FROM user WHERE user_id = " . $_SESSION['userID']));
+
+						$_SESSION['loggedUser'] = $rowQueryUser['username'];
+						$_SESSION['userEmail'] = $rowQueryUser['email'];
+					}
+				}
+			}
+		}
 ?>
 <html>
 <head>
@@ -89,84 +186,55 @@
 					elseif(isset($_GET['edit']) && $_GET['edit'] == true){
 						echo'
 						<ul class="account-list">
-							<form class="account-edit" method="post" target="_self">
+							<form class="account-edit" enctype="multipart/form-data" method="post" target="_self">
 							<li><b>Username: </b><input type="textbox" name="username" placeholder="' . $_SESSION['loggedUser'] . '"></input></li>
-							<li><b>Email Address: </b><input type="textbox" name="emailAdd" placeholder="' . $_SESSION['userEmail'] . '"></input></li>
+							<li><b>Email Address: </b><input type="email" name="emailAdd" placeholder="' . $_SESSION['userEmail'] . '"></input></li>
 							<li><b>Password: </b><input type="password" name="curPass" placeholder="Current Password"></input></li>
 							<li><b>&nbsp;</b><input type="password" name="newPass" placeholder="New Password"></input></li>
 							<li><b>&nbsp;</b><input type="password" name="conPass" placeholder="Confirm New Password"></input></li>
+							<li><b>Change Account image: </b><input class="formInput accImageSelect right" type="file" name="profileImage" accept="image/png"></input></li>
 							<li><b>&nbsp;</b><input type="submit" name="submit"></input></li>
 						';
 					}
 					if(!empty($_POST)){
-						if(isset($_POST['submit'])){
-							if($_POST['username'] != "" && $_POST['emailAdd'] != "" && $_POST['curPass'] != "" && $_POST['newPass'] != "" && $_POST['conPass'] != ""){
-
-								//Sanitation
-								$username = htmlspecialchars($_POST['username']);
-								$email = htmlspecialchars($_POST['emailAdd']);
-								$curPass = htmlspecialchars($_POST['curPass']);
-								$newPass = htmlspecialchars($_POST['newPass']);
-								$conPass = htmlspecialchars($_POST['conPass']);
-								//Check user and Pass for chars other than alphanumeric
-								$userCheck = (preg_match('/\W+/', $_POST["username"]));
-								$passCheck = (preg_match('/\W+\[@\/\\%&£#]+/', $_POST["username"]));
-
-								//Get password hash from database for password checks.
-								$getPass = 'SELECT password FROM user WHERE username = ' . $SESSION['loggedUser'];
-								$passQuery = mysqli_query($connect, $getPass);
-								$passFetch = mysqli_fetch_array($passQuery);
-								$passHash = $passFetch['password'];
-
-								//check database to see if account with registered username already exists
-								$checkUser = ("SELECT * FROM user WHERE username = '$newUser'");
-								$queryUser = mysqli_query($connect, $checkUser);
-								$rowUser = mysqli_affected_rows($connect);
-
-								//Check username
-								if(strlen($username) < 1){
-									echo'<p class="form-errmsg msg-red">Your username is too short.</p>';
-								}
-								elseif(strlen($username) > 15){
-									echo'<p class="form-errmsg msg-red">Your username is too short.</p>';
-								}
-								elseif($rowUser >= 1){
-									echo'<p class="form-errmsg msg-red">This username already exists, Please try another.</p>';
-								}
-								//Check Email
-								elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-									echo'<p class="form-errmsg msg-red">Invalid Email, Please try again.</p>';
-								}
-								elseif($userCheck == 1 or $passCheck == 1){
-									echo'<p class="form-errmsg msg-red">Your username/password contained an invalid character, Please try again.</p>';
-								}
-								//Check Password
-								elseif(password_hash($curPass) !== $passHash){
-									echo'<p class="form-errmsg msg-pink">Your current password is incorrect, please try again.</p>';
-								}
-							}
-							else{
+						//If the error vars above are empty we are good.
+						if(isset($badUser)){
+							echo'<p class="form-errmsg msg-red">This username contains illegal characters, Please try another.</p>';
+							echo'<p class="form-errmsg msg-blu">Usernames can only contain alphanumeric characters (A-Z, 0-9)</p>';
+						}
+						elseif(isset($longUser)){
+							echo'<p class="form-errmsg msg-red">This username is too long, Please try another.</p>';
+							echo'<p class="form-errmsg msg-blu">Usernames must be 1-15 characters long.</p>';
+						}
+						elseif(isset($existUser)){
+							echo'<p class="form-errmsg msg-red">An account with this username already exists, Please try another.</p>';
+						}
+						elseif(isset($badPass)){
+							echo'<p class="form-errmsg msg-red">Your password does not match our records, please try again.</p>';
+							echo'<p class="form-errmsg msg-blu">Passwords can only contain alphanumeric characters (A-Z, 0-9)</p>';
+						}
+						elseif(isset($badNewPass)){
+							echo'<p class="form-errmsg msg-red">Your chosen new password contains illegal characters, please try another.</p>';
+						}
+						elseif(isset($badConPass)){
+							echo'<p class="form-errmsg msg-red">Your new passwords do not match, please try again.</p>';
+						}
+						elseif(isset($image) && $image != true){
+							echo'<p class="form-errmsg msg-red">Your image has failed to upload, please try another.</p>';
+							echo'<p class="form-errmsg msg-blu">Pimages should be ".png" format and recommended (200x200)px in size.</p>';
+						}
+						else{
+							if($updateUser == TRUE){
 								echo'
-								<p class="form-errmsg msg-red">One or more values were left blank. Please try again.</p>
+								<p class="form-errmsg msg-grn fade">Edits Succesfully saved.</p>
 								';
 							}
-
-							//
-							//
-							//IS INCORRECTLY LAID OUT, NEEDS TO ALLOW BLANK ENTRIES BUT IGNORE THEM AT THE END.
-							//consider making an array of things to be changed and their values and insert directly
-							//into a query at the end.
-							//
-							echo'
-							<p class="form-errmsg msg-grn fade">Edits Succesfully saved.</p>
-							';
-
 						}
-						echo'
-							</form>
-						</ul>
-						';
 					}
+			echo'
+				</form>
+			</ul>
+			';
 					?>
 				</td>
 			</tr>

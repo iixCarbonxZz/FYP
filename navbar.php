@@ -1,4 +1,9 @@
 <?php
+	//Check if their user account level has changed since entering this page
+	if(isset($_SESSION['logged'])){
+		$getAccLvl = mysqli_fetch_array(mysqli_query($connect, "SELECT acc_level FROM user WHERE user_id =" . $_SESSION['userID']));
+		$_SESSION['accLvl'] = $getAccLvl['acc_level'];
+	}
 ?>
 <div class="navigation-bar">
 	<a class="navigation-logo" href="index.php"></a>

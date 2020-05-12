@@ -123,12 +123,14 @@ a:visited{
 .navigation-logo{
 	display:inline-block;
 	height: 60px;
-	width:120px;
-	background-image:url("../img/banner-logo-2.png");
+	width:240px;
+	background-image:url("../img/banner/banner-logo.png");
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 
 .navigation-logo:hover{
-	background-image:url("../img/banner-logo-2-L.png");
+	background-image:url("../img/banner/banner-logo-l.png");
 	cursor: pointer;
 }
 
@@ -201,7 +203,7 @@ a:visited{
   color: #FFF;
 	background-color: transparent;
 	height: 60px;
-	width: 156px;
+	width: 160px;
   padding-left: 5%;
   text-decoration: none;
 	font-weight:bold;
@@ -437,6 +439,11 @@ cursor: pointer;
 	background-color: #0A0;
 }
 
+.msg-blu{
+	color: #FFF;
+	background-color: #00A;
+}
+
 /*
 ********************************************************************************
 ********************************************************************************
@@ -620,6 +627,18 @@ p.msg{
 }
 
 .imageSelect:hover{
+	border: none;
+}
+
+.accImageSelect{
+	display: block;
+	border: none;
+	width: auto;
+	margin-right: -78px;
+	margin-top: -2px;
+}
+
+.accImageSelect:hover{
 	border: none;
 }
 
