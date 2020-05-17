@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 05, 2020 at 05:55 AM
+-- Generation Time: May 17, 2020 at 03:28 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.3
 
@@ -25,6 +25,94 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `basket`
+--
+
+CREATE TABLE `basket` (
+  `userID` int(10) NOT NULL,
+  `itemID` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `catalog`
+--
+
+CREATE TABLE `catalog` (
+  `itemID` int(5) NOT NULL,
+  `knitterID` int(5) NOT NULL,
+  `itemName` varchar(64) NOT NULL,
+  `itemColor` varchar(16) NOT NULL,
+  `itemDesc` varchar(256) NOT NULL,
+  `itemPrice` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `itemstatus`
+--
+
+CREATE TABLE `itemstatus` (
+  `statusID` int(1) NOT NULL,
+  `statusDesc` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `knitter`
+--
+
+CREATE TABLE `knitter` (
+  `userID` int(10) DEFAULT NULL,
+  `knitterID` int(5) NOT NULL,
+  `knitterName` varchar(32) NOT NULL,
+  `knitterDesc` varchar(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderitems`
+--
+
+CREATE TABLE `orderitems` (
+  `orderItemID` int(5) NOT NULL,
+  `orderID` int(10) NOT NULL,
+  `itemID` int(5) NOT NULL,
+  `statusID` int(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderstatus`
+--
+
+CREATE TABLE `orderstatus` (
+  `statusID` int(1) NOT NULL,
+  `statusDesc` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ordertable`
+--
+
+CREATE TABLE `ordertable` (
+  `orderID` int(10) NOT NULL,
+  `userID` int(10) NOT NULL,
+  `statusID` int(1) NOT NULL,
+  `orderTotal` float NOT NULL,
+  `orderPlace` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user`
 --
 
@@ -38,18 +126,58 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`user_id`, `username`, `email`, `password`, `create_time`, `acc_level`) VALUES
-(1, 'Admin', 'webmaster@thissite.com', '$2y$10$V1qAnpp217pzaNtGOsE7sOo4vsG7DHWtO3VlXHklXj5jOkXncb1u.', '06/01/2020', 3),
-(2, 'user', 'user@webmail.com', '$2y$10$ehG0jflBN1.D6Nvo5mgmfeCSzkaKkzmaoMditBARLmwYbSSDIHbnC', '06/01/2020', 1),
-(3, 'iixCarbonxZz', 'iixcarbonxzz@gmail.com', '$2y$10$E./OywIdK2BcRd7UT6NGROzUbIvb5Ghde7amA22.p3FNOxbvpl2ha', '05/03/2020', 1),
-(4, 'test', 'a@a.a', '$2y$10$LktSYIb9BT4bBjJHU5M2DuTQINRxyn0WvwGst6iOoJbMAtmMzkWjq', '05/03/2020', 1);
-
---
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `basket`
+--
+ALTER TABLE `basket`
+  ADD KEY `itemID` (`itemID`),
+  ADD KEY `userIDBasket` (`userID`);
+
+--
+-- Indexes for table `catalog`
+--
+ALTER TABLE `catalog`
+  ADD PRIMARY KEY (`itemID`),
+  ADD KEY `knitterID` (`knitterID`);
+
+--
+-- Indexes for table `itemstatus`
+--
+ALTER TABLE `itemstatus`
+  ADD PRIMARY KEY (`statusID`);
+
+--
+-- Indexes for table `knitter`
+--
+ALTER TABLE `knitter`
+  ADD PRIMARY KEY (`knitterID`),
+  ADD KEY `userID` (`userID`);
+
+--
+-- Indexes for table `orderitems`
+--
+ALTER TABLE `orderitems`
+  ADD PRIMARY KEY (`orderItemID`),
+  ADD KEY `orderID` (`orderID`),
+  ADD KEY `itemStatusID` (`statusID`),
+  ADD KEY `itemID2` (`itemID`);
+
+--
+-- Indexes for table `orderstatus`
+--
+ALTER TABLE `orderstatus`
+  ADD PRIMARY KEY (`statusID`);
+
+--
+-- Indexes for table `ordertable`
+--
+ALTER TABLE `ordertable`
+  ADD PRIMARY KEY (`orderID`),
+  ADD KEY `orderUserID` (`userID`),
+  ADD KEY `orderStatusID` (`statusID`);
 
 --
 -- Indexes for table `user`
@@ -62,10 +190,71 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `catalog`
+--
+ALTER TABLE `catalog`
+  MODIFY `itemID` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `knitter`
+--
+ALTER TABLE `knitter`
+  MODIFY `knitterID` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `orderitems`
+--
+ALTER TABLE `orderitems`
+  MODIFY `orderItemID` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ordertable`
+--
+ALTER TABLE `ordertable`
+  MODIFY `orderID` int(10) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `basket`
+--
+ALTER TABLE `basket`
+  ADD CONSTRAINT `itemID` FOREIGN KEY (`itemID`) REFERENCES `catalog` (`itemID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `userIDBasket` FOREIGN KEY (`userID`) REFERENCES `user` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `catalog`
+--
+ALTER TABLE `catalog`
+  ADD CONSTRAINT `knitterID` FOREIGN KEY (`knitterID`) REFERENCES `knitter` (`knitterID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `knitter`
+--
+ALTER TABLE `knitter`
+  ADD CONSTRAINT `userID` FOREIGN KEY (`userID`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `orderitems`
+--
+ALTER TABLE `orderitems`
+  ADD CONSTRAINT `itemStatusID` FOREIGN KEY (`statusID`) REFERENCES `itemstatus` (`statusID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `orderID` FOREIGN KEY (`orderID`) REFERENCES `ordertable` (`orderID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `ordertable`
+--
+ALTER TABLE `ordertable`
+  ADD CONSTRAINT `orderStatusID` FOREIGN KEY (`statusID`) REFERENCES `orderstatus` (`statusID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `orderUserID` FOREIGN KEY (`userID`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
